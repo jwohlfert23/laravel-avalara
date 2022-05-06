@@ -3,6 +3,7 @@
 namespace Jwohlfert23\LaravelAvalara\Responses;
 
 use Jwohlfert23\LaravelAvalara\AvalaraDocType;
+use Jwohlfert23\LaravelAvalara\Casters\DocTypeCaster;
 use Spatie\DataTransferObject\Attributes\CastWith;
 use Spatie\DataTransferObject\Casters\ArrayCaster;
 use Spatie\DataTransferObject\DataTransferObject;
@@ -14,6 +15,8 @@ class AvalaraTransaction extends DataTransferObject
     public ?int $companyId;
     public ?string $date;
     public ?string $status;
+
+    #[CastWith(DocTypeCaster::class)]
     public ?AvalaraDocType $type;
     public ?string $currencyCode;
     public ?string $customerCode;
