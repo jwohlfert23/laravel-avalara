@@ -17,7 +17,7 @@ composer require jwohlfert23/laravel-avalara
 You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --tag="laravel-avalara-config"
+php artisan vendor:publish --tag="avalara-config"
 ```
 
 ## Usage

@@ -6,6 +6,8 @@ use Jwohlfert23\LaravelAvalara\AvalaraDocType;
 
 class TransactionModel extends BaseAvalaraModel
 {
+    public string $companyCode;
+
     public ?float $discount = null;
 
     public ?string $purchaseOrderNo = null;
@@ -28,11 +30,10 @@ class TransactionModel extends BaseAvalaraModel
 
     public function __construct(
         public AvalaraDocType $type,
-        public string $companyCode,
-        public string $customerCode,
-        public \DateTimeInterface $date,
+        public ?string $customerCode = null,
+        public ?\DateTimeInterface $date = null,
         public ?string $code = null,
     ) {
-
+        $this->companyCode = config('avalara.company_code', '');
     }
 }
