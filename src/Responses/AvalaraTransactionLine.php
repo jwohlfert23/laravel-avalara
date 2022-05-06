@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Avalara\Models;
+namespace Jwohlfert23\LaravelAvalara\Responses;
 
 use Spatie\DataTransferObject\DataTransferObject;
 

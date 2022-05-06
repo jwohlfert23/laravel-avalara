@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Avalara\Models;
+namespace Jwohlfert23\LaravelAvalara\Responses;
 
-use App\Services\Avalara\AvalaraDocType;
+use Jwohlfert23\LaravelAvalara\AvalaraDocType;
 use Spatie\DataTransferObject\Attributes\CastWith;
 use Spatie\DataTransferObject\Casters\ArrayCaster;
 use Spatie\DataTransferObject\DataTransferObject;

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Avalara\Models;
+namespace Jwohlfert23\LaravelAvalara\Requests;
 
-use App\Services\Avalara\AvalaraDocType;
+use Jwohlfert23\LaravelAvalara\AvalaraDocType;
 
 class TransactionModel extends BaseAvalaraModel
 {

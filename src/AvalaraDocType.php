@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Avalara;
+namespace Jwohlfert23\LaravelAvalara;
 
 enum AvalaraDocType: string
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Services\Avalara;
+namespace Jwohlfert23\LaravelAvalara;
 
-use App\Services\Avalara\Models\CreateTransactionModel;
-use App\Services\Avalara\Models\AvalaraTransaction;
+use Jwohlfert23\LaravelAvalara\Requests\TransactionModel;
+use Jwohlfert23\LaravelAvalara\Responses\AvalaraTransaction;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
@@ -19,12 +19,12 @@ class AvalaraClient
     }
 
     /**
-     * @param  CreateTransactionModel  $model
+     * @param  TransactionModel  $model
      * @return AvalaraTransaction|null
      * @throws AvalaraException
      * @throws UnknownProperties
      */
-    public static function createTransaction(CreateTransactionModel $model): ?AvalaraTransaction
+    public static function createTransaction(TransactionModel $model): ?AvalaraTransaction
     {
         $res = self::getRequest()->post('transactions/create', $model->toArray());
 
