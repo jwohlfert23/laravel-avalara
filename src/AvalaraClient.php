@@ -39,6 +39,7 @@ class AvalaraClient
      * @param  string  $transCode
      * @param  AvalaraDocType  $documentType
      * @return Response
+     * @throws AvalaraException
      */
     public static function voidTransaction(
         string $transCode,
@@ -47,8 +48,14 @@ class AvalaraClient
         $companyCode = config('avalara.company_code');
         $url = "companies/$companyCode/transactions/$transCode/void?documentType=$documentType->value";
 
-        return self::getRequest()->post($url, [
+        $res = self::getRequest()->post($url, [
             'code' => 'DocVoided',
         ]);
+
+        if (! $res->successful()) {
+            throw AvalaraException::fromResponse($res);
+        }
+
+        return $res;
     }
 }
