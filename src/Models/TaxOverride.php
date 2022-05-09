@@ -1,10 +1,10 @@
 <?php
 
-namespace Jwohlfert23\LaravelAvalara\Requests;
+namespace Jwohlfert23\LaravelAvalara\Models;
 
 use Carbon\Carbon;
 
-class TaxOverrideModel extends BaseAvalaraModel
+class TaxOverride extends BaseModel
 {
     public string $type;
     public ?float $taxAmount;
@@ -13,7 +13,7 @@ class TaxOverrideModel extends BaseAvalaraModel
 
     public static function taxDate(Carbon $taxDate, string $reason = null)
     {
-        $model = new TaxOverrideModel();
+        $model = new TaxOverride();
         $model->type = 'TaxDate';
         $model->taxDate = $taxDate;
         $model->reason = $reason;

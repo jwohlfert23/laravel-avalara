@@ -7,6 +7,7 @@ return [
 
     'password' => env('AVALARA_PASSWORD'),
 
-    'company_code' => env('AVALARA_COMPANY_CODE'),
+    'company_id' => env('AVALARA_COMPANY_ID'),
 
+    'company_code' => env('AVALARA_COMPANY_CODE'),
 ];

@@ -1,10 +1,8 @@
 <?php
 
-namespace Jwohlfert23\LaravelAvalara\Responses;
+namespace Jwohlfert23\LaravelAvalara\Models;
 
-use Spatie\DataTransferObject\DataTransferObject;
-
-class AvalaraTransactionLine extends DataTransferObject
+class TransactionLineItem extends BaseModel
 {
     public ?int $id;
     public ?int $transactionId;
@@ -23,7 +21,7 @@ class AvalaraTransactionLine extends DataTransferObject
     public float $lineAmount;
     public float|int $quantity;
     public ?string $reportingDate;
-    public float $tax;
+    public ?float $tax;
     public ?float $taxableAmount;
     public ?float $taxCalculated;
     public ?string $taxCode;

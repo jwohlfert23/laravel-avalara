@@ -1,22 +1,16 @@
 <?php
 
-namespace Jwohlfert23\LaravelAvalara\Responses;
+namespace Jwohlfert23\LaravelAvalara\Models;
 
 use Jwohlfert23\LaravelAvalara\AvalaraDocType;
-use Jwohlfert23\LaravelAvalara\Casters\DocTypeCaster;
-use Spatie\DataTransferObject\Attributes\CastWith;
-use Spatie\DataTransferObject\Casters\ArrayCaster;
-use Spatie\DataTransferObject\DataTransferObject;
 
-class AvalaraTransaction extends DataTransferObject
+class Transaction extends BaseModel
 {
     public ?int $id;
     public ?string $code;
     public ?int $companyId;
     public ?string $date;
     public ?string $status;
-
-    #[CastWith(DocTypeCaster::class)]
     public ?AvalaraDocType $type;
     public ?string $currencyCode;
     public ?string $customerCode;
@@ -44,7 +38,15 @@ class AvalaraTransaction extends DataTransferObject
     public ?string $email;
     public ?string $taxDate;
 
-    /** @var null|AvalaraTransactionLine[] */
-    #[CastWith(ArrayCaster::class, itemType: AvalaraTransactionLine::class)]
+    /** @var null|TransactionLineItem[] */
     public ?array $lines;
+
+    public function toNestedModel(string $name, array $value)
+    {
+        if ($name === 'lines') {
+            return new TransactionLineItem($value);
+        }
+
+        return null;
+    }
 }
