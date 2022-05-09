@@ -4,6 +4,7 @@ namespace Jwohlfert23\LaravelAvalara\Models;
 
 use Jwohlfert23\LaravelAvalara\AvalaraClient;
 use Jwohlfert23\LaravelAvalara\AvalaraDocType;
+use Jwohlfert23\LaravelAvalara\Facades\Avalara;
 
 class CreateTransaction extends BaseModel
 {
@@ -78,6 +79,6 @@ class CreateTransaction extends BaseModel
 
     public function create(): Transaction
     {
-        return app(AvalaraClient::class)->createTransaction($this);
+        return Avalara::createTransaction($this);
     }
 }
