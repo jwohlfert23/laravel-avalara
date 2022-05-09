@@ -21,7 +21,7 @@ class CreateTransaction extends BaseModel
 
     public string $companyCode;
 
-    public string $date;
+    public \DateTimeInterface $date;
 
     public string $salespersonCode;
 
