@@ -10,4 +10,9 @@ class Avalara extends Facade
     {
         return 'laravel-avalara';
     }
+
+    public static function isMocked(): bool
+    {
+        return self::isMock();
+    }
 }
