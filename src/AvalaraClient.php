@@ -3,10 +3,9 @@
 namespace Jwohlfert23\LaravelAvalara;
 
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\HttpClientException;
 use Illuminate\Http\Client\PendingRequest;
-use Illuminate\Http\Client\Request;
 use Illuminate\Http\Client\RequestException;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Jwohlfert23\LaravelAvalara\Models\Certificate;
 use Jwohlfert23\LaravelAvalara\Models\CreateTransaction;
@@ -28,87 +27,65 @@ class AvalaraClient
     protected function getRequest(): PendingRequest
     {
         return Http::baseUrl(config('avalara.url'))
+            ->throw()
             ->withBasicAuth(config('avalara.username'), config('avalara.password'))
-            ->asJson()
-            // If we receive a gateway timeout from Avalara (not uncommon),
-            // and the request was not mutating something,
-            // retry it up to 3 times.
-            ->retry(3, 100, function ($e, Request $request) {
-                $is504 = $e instanceof RequestException && $e->response->status() === 504;
-                $isConnection = $e instanceof ConnectionException;
-                if ($is504 || $isConnection) {
-                    if ($request->method() === 'GET') {
-                        return true;
-                    }
-                    $isQuote = in_array(Arr::get($request->data(), 'type'), [
-                        AvalaraDocType::SALES_ORDER->value,
-                        AvalaraDocType::PURCHASE_ORDER->value,
-                        AvalaraDocType::RETURN_ORDER->value,
-                        AvalaraDocType::INVENTORY_TRANSFER_ORDER->value,
-                    ]);
-                    if ($isQuote) {
-                        return true;
-                    }
-                }
+            ->asJson();
+    }
 
-                return false;
-            });
+    public static function shouldRetry(HttpClientException $e): bool
+    {
+        $is504 = $e instanceof RequestException && $e->response->status() === 504;
+        $isConnection = $e instanceof ConnectionException;
+
+        return $is504 || $isConnection;
     }
 
     protected function get(string $url, array $query = []): array
     {
-        $res = $this->getRequest()->get($url, $query);
-
-        if (! $res->successful()) {
-            throw AvalaraException::fromResponse($res);
+        try {
+            return $this->getRequest()->retry(3, 100, [$this, 'shouldRetry'])->get($url, $query)->json();
+        } catch (RequestException $e) {
+            throw AvalaraException::fromResponse($e->response);
         }
-
-        return $res->json();
     }
 
     protected function post(string $url, array $data): array
     {
-        $res = $this->getRequest()->post($url, $data);
-
-        if (! $res->successful()) {
-            throw AvalaraException::fromResponse($res);
+        try {
+            return $this->getRequest()->post($url, $data)->json();
+        } catch (RequestException $e) {
+            throw AvalaraException::fromResponse($e->response);
         }
-
-        return $res->json();
     }
 
     protected function put(string $url, array $data): array
     {
-        $res = $this->getRequest()->put($url, $data);
-
-        if (! $res->successful()) {
-            throw AvalaraException::fromResponse($res);
+        try {
+            return $this->getRequest()->put($url, $data)->json();
+        } catch (RequestException $e) {
+            throw AvalaraException::fromResponse($e->response);
         }
-
-        return $res->json();
     }
 
     protected function delete(string $url, array $data = []): array
     {
-        $res = $this->getRequest()->delete($url, $data);
-
-        if (! $res->successful()) {
-            throw AvalaraException::fromResponse($res);
+        try {
+            return $this->getRequest()->delete($url, $data)->json();
+        } catch (RequestException $e) {
+            throw AvalaraException::fromResponse($e->response);
         }
-
-        return $res->json();
     }
 
     /**
      * @param  string  $transCode
      * @param  AvalaraDocType  $documentType
-     * @return Transaction|null
+     * @return Transaction
      * @throws AvalaraException
      */
     public function getTransactionByCode(
         string $transCode,
         AvalaraDocType $documentType = AvalaraDocType::SALES_INVOICE
-    ): ?Transaction {
+    ): Transaction {
         $res = $this->get("companies/$this->companyCode/transactions/$transCode", [
             'documentType' => $documentType->value,
         ]);
@@ -118,15 +95,25 @@ class AvalaraClient
 
     /**
      * @param  CreateTransaction  $model
-     * @return Transaction|null
+     * @return Transaction
      * @throws AvalaraException
      */
-    public function createTransaction(CreateTransaction $model): ?Transaction
+    public function createTransaction(CreateTransaction $model): Transaction
     {
         if (! isset($model->companyCode)) {
             $model->companyCode = $this->companyCode;
         }
-        $res = $this->post('transactions/create', $model->toArray());
+
+        try {
+            $res = $this->getRequest()
+                ->when($model->type->isQuote(), function (PendingRequest $req) {
+                    return $req->retry(3, 100, [$this, 'shouldRetry']);
+                })
+                ->post('transactions/create', $model->toArray())
+                ->json();
+        } catch (RequestException $e) {
+            throw AvalaraException::fromResponse($e->response);
+        }
 
         return new Transaction($res);
     }

@@ -2,6 +2,8 @@
 
 namespace Jwohlfert23\LaravelAvalara;
 
+use Illuminate\Support\Str;
+
 enum AvalaraDocType: string
 {
     case SALES_INVOICE = 'SalesInvoice';
@@ -15,4 +17,9 @@ enum AvalaraDocType: string
 
     case PURCHASE_INVOICE = 'PurchaseInvoice';
     case PURCHASE_ORDER = 'PurchaseOrder';
+
+    public function isQuote(): bool
+    {
+        return Str::endsWith($this->value, 'Order');
+    }
 }

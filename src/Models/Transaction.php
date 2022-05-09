@@ -39,7 +39,7 @@ class Transaction extends BaseModel
     public ?string $taxDate;
 
     /** @var null|TransactionLineItem[] */
-    public ?array $lines;
+    public array $lines;
 
     public function toNestedModel(string $name, array $value)
     {

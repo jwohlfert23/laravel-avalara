@@ -40,7 +40,7 @@ $transaction->addresses['ShipTo'] = new \App\Services\Avalara\Models\AddressMode
   
 $transaction->lines[] = new CreateLineItem(
     number: 0,
-    amount: 50.00
+    amount: 50.00,
     quantity: 2,
     taxCode: 'P0000000'
 );

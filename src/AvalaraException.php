@@ -14,7 +14,7 @@ class AvalaraException extends Exception
     {
         $message = $response->json('error.message', 'An unknown error occurred');
         $e = new static('Avalara: '.$message);
-        $e->response = $response->json();
+        $e->response = $response->json() ?? [];
 
         return $e;
     }
