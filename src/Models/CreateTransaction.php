@@ -2,7 +2,6 @@
 
 namespace Jwohlfert23\LaravelAvalara\Models;
 
-use Jwohlfert23\LaravelAvalara\AvalaraClient;
 use Jwohlfert23\LaravelAvalara\AvalaraDocType;
 use Jwohlfert23\LaravelAvalara\Facades\Avalara;
 

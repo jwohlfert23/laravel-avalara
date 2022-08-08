@@ -36,7 +36,7 @@ class BaseModel implements Arrayable, \JsonSerializable
                 return $value;
             }
             if (isset($value[0])) {
-                return array_map(fn($item) => $this->toNestedModel($property->getName(), $item), $value);
+                return array_map(fn ($item) => $this->toNestedModel($property->getName(), $item), $value);
             }
         }
 
@@ -51,7 +51,7 @@ class BaseModel implements Arrayable, \JsonSerializable
     public function toValue(mixed $value): mixed
     {
         if (is_array($value)) {
-            return array_map(fn($item) => $this->toValue($item), $value);
+            return array_map(fn ($item) => $this->toValue($item), $value);
         }
         if ($value instanceof BaseModel) {
             return $value->toArray();

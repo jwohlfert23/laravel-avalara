@@ -11,17 +11,19 @@ use Jwohlfert23\LaravelAvalara\Models\Certificate;
 use Jwohlfert23\LaravelAvalara\Models\CreateTransaction;
 use Jwohlfert23\LaravelAvalara\Models\Customer;
 use Jwohlfert23\LaravelAvalara\Models\ExemptionReason;
+use Jwohlfert23\LaravelAvalara\Models\Region;
 use Jwohlfert23\LaravelAvalara\Models\Transaction;
 
 class AvalaraClient
 {
     protected int $companyId;
+
     protected string $companyCode;
 
     public function __construct(int $companyId = null, string $companyCode = null)
     {
-        $this->companyId = $companyId ?? config('avalara.company_id') ?? throw new \Exception("Could not determine companyId");
-        $this->companyCode = $companyCode ?? config('avalara.company_code') ?? throw new \Exception("Could not determine companyCode");
+        $this->companyId = $companyId ?? config('avalara.company_id') ?? throw new \Exception('Could not determine companyId');
+        $this->companyCode = $companyCode ?? config('avalara.company_code') ?? throw new \Exception('Could not determine companyCode');
     }
 
     protected function getRequest(): PendingRequest
@@ -80,6 +82,7 @@ class AvalaraClient
      * @param  string  $transCode
      * @param  AvalaraDocType  $documentType
      * @return Transaction
+     *
      * @throws AvalaraException
      */
     public function getTransactionByCode(
@@ -96,6 +99,7 @@ class AvalaraClient
     /**
      * @param  CreateTransaction  $model
      * @return Transaction
+     *
      * @throws AvalaraException
      */
     public function createTransaction(CreateTransaction $model): Transaction
@@ -142,6 +146,7 @@ class AvalaraClient
      * @param  AvalaraDocType  $documentType
      * @param  string  $code
      * @return Transaction
+     *
      * @throws AvalaraException
      */
     public function voidTransaction(
@@ -158,6 +163,7 @@ class AvalaraClient
 
     /**
      * @return ExemptionReason[]
+     *
      * @throws AvalaraException
      */
     public function listCertificateExemptReasons(): array
@@ -170,8 +176,23 @@ class AvalaraClient
     }
 
     /**
+     * @return Region[]
+     *
+     * @throws AvalaraException
+     */
+    public function listRegions(): array
+    {
+        $res = $this->get('definitions/regions');
+
+        return collect($res['value'])->map(function ($row) {
+            return new Region($row);
+        })->all();
+    }
+
+    /**
      * @param  string  $customerCode
      * @return Customer
+     *
      * @throws AvalaraException
      */
     public function getCustomerByCode(string $customerCode): Customer
@@ -184,6 +205,7 @@ class AvalaraClient
     /**
      * @param  Customer  $model
      * @return Customer
+     *
      * @throws AvalaraException
      */
     public function createCustomer(Customer $model): Customer
@@ -196,6 +218,7 @@ class AvalaraClient
     /**
      * @param  Customer  $model
      * @return Customer
+     *
      * @throws AvalaraException
      */
     public function updateCustomer(Customer $model): Customer
@@ -208,6 +231,7 @@ class AvalaraClient
     /**
      * @param  string  $customerCode
      * @return void
+     *
      * @throws AvalaraException
      */
     public function deleteCustomer(string $customerCode): void
@@ -218,6 +242,7 @@ class AvalaraClient
     /**
      * @param  string  $customerCode
      * @return Certificate[]
+     *
      * @throws AvalaraException
      */
     public function listCertificatesForCustomer(string $customerCode): array
@@ -233,6 +258,7 @@ class AvalaraClient
      * @param  string  $customerCode
      * @param  array  $ids
      * @return Certificate[]
+     *
      * @throws AvalaraException
      */
     public function linkCertificatesToCustomer(string $customerCode, array $ids): array
@@ -250,6 +276,7 @@ class AvalaraClient
      * @param  string  $customerCode
      * @param  array  $ids
      * @return array
+     *
      * @throws AvalaraException
      */
     public function unlinkCertificatesFromCustomer(string $customerCode, array $ids): array
@@ -266,6 +293,7 @@ class AvalaraClient
     /**
      * @param  Certificate  $model
      * @return Certificate
+     *
      * @throws AvalaraException
      */
     public function createCertificate(Certificate $model): Certificate
@@ -278,6 +306,7 @@ class AvalaraClient
     /**
      * @param  Certificate  $model
      * @return Certificate
+     *
      * @throws AvalaraException
      */
     public function updateCertificate(Certificate $model)
@@ -290,6 +319,7 @@ class AvalaraClient
     /**
      * @param  int  $id
      * @return void
+     *
      * @throws AvalaraException
      */
     public function deleteCertificate(int $id): void

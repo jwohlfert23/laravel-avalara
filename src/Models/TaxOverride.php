@@ -7,8 +7,11 @@ use Carbon\Carbon;
 class TaxOverride extends BaseModel
 {
     public string $type;
+
     public ?float $taxAmount;
+
     public ?Carbon $taxDate;
+
     public ?string $reason;
 
     public static function taxDate(Carbon $taxDate, string $reason = null)

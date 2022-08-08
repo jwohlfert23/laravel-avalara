@@ -3,8 +3,8 @@
 namespace Jwohlfert23\LaravelAvalara\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Orchestra\Testbench\TestCase as Orchestra;
 use Jwohlfert23\LaravelAvalara\LaravelAvalaraServiceProvider;
+use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {

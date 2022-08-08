@@ -2,18 +2,18 @@
 
 use Illuminate\Support\Facades\Http;
 use Jwohlfert23\LaravelAvalara\AvalaraDocType;
-use Jwohlfert23\LaravelAvalara\Models\CreateTransaction;
-use Jwohlfert23\LaravelAvalara\Models\CreateLineItem;
-use Jwohlfert23\LaravelAvalara\Models\Address;
-use Jwohlfert23\LaravelAvalara\Models\Transaction;
 use Jwohlfert23\LaravelAvalara\AvalaraException;
+use Jwohlfert23\LaravelAvalara\Models\Address;
+use Jwohlfert23\LaravelAvalara\Models\CreateLineItem;
+use Jwohlfert23\LaravelAvalara\Models\CreateTransaction;
+use Jwohlfert23\LaravelAvalara\Models\Transaction;
 
 beforeEach(function () {
     config()->set([
         'avalara.username' => 'testing@gmail.com',
         'avalara.password' => '1234',
         'avalara.company_id' => 1,
-        'avalara.company_code' => 'testing'
+        'avalara.company_code' => 'testing',
     ]);
 });
 
@@ -39,10 +39,10 @@ it('can create transaction', function () {
                     'lineAmount' => 50.00,
                     'quantity' => 2,
                     'taxCode' => 'P0000000',
-                    'tax' => 10.00
-                ]
-            ]
-        ])
+                    'tax' => 10.00,
+                ],
+            ],
+        ]),
     ]);
 
     $transaction = new CreateTransaction();
@@ -81,12 +81,11 @@ it('retries quotes', function () {
     expect($res->totalTax)->toEqual(20.01);
 });
 
-
 it('throws AvalaraException on failure', function () {
     $transaction = new CreateTransaction();
 
     Http::fake([
-        '*' => Http::response('', 504)
+        '*' => Http::response('', 504),
     ]);
 
     $transaction->date = now();
