@@ -27,4 +27,7 @@ class CreateLineItem extends BaseModel
     public string $ref2;
 
     public string $description;
+
+    /** @var Address[] */
+    public ?array $addresses;
 }
