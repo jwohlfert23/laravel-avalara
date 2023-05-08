@@ -8,6 +8,7 @@ use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Jwohlfert23\LaravelAvalara\Models\Certificate;
+use Jwohlfert23\LaravelAvalara\Models\CreateCertExpressInvitation;
 use Jwohlfert23\LaravelAvalara\Models\CreateTransaction;
 use Jwohlfert23\LaravelAvalara\Models\Customer;
 use Jwohlfert23\LaravelAvalara\Models\ExemptionReason;
@@ -79,10 +80,6 @@ class AvalaraClient
     }
 
     /**
-     * @param  string  $transCode
-     * @param  AvalaraDocType  $documentType
-     * @return Transaction
-     *
      * @throws AvalaraException
      */
     public function getTransactionByCode(
@@ -97,9 +94,6 @@ class AvalaraClient
     }
 
     /**
-     * @param  CreateTransaction  $model
-     * @return Transaction
-     *
      * @throws AvalaraException
      */
     public function createTransaction(CreateTransaction $model): Transaction
@@ -142,11 +136,6 @@ class AvalaraClient
     }
 
     /**
-     * @param  string  $transCode
-     * @param  AvalaraDocType  $documentType
-     * @param  string  $code
-     * @return Transaction
-     *
      * @throws AvalaraException
      */
     public function voidTransaction(
@@ -190,9 +179,6 @@ class AvalaraClient
     }
 
     /**
-     * @param  string  $customerCode
-     * @return Customer
-     *
      * @throws AvalaraException
      */
     public function getCustomerByCode(string $customerCode): Customer
@@ -203,9 +189,6 @@ class AvalaraClient
     }
 
     /**
-     * @param  Customer  $model
-     * @return Customer
-     *
      * @throws AvalaraException
      */
     public function createCustomer(Customer $model): Customer
@@ -216,9 +199,6 @@ class AvalaraClient
     }
 
     /**
-     * @param  Customer  $model
-     * @return Customer
-     *
      * @throws AvalaraException
      */
     public function updateCustomer(Customer $model): Customer
@@ -229,9 +209,6 @@ class AvalaraClient
     }
 
     /**
-     * @param  string  $customerCode
-     * @return void
-     *
      * @throws AvalaraException
      */
     public function deleteCustomer(string $customerCode): void
@@ -240,7 +217,6 @@ class AvalaraClient
     }
 
     /**
-     * @param  string  $customerCode
      * @return Certificate[]
      *
      * @throws AvalaraException
@@ -255,8 +231,6 @@ class AvalaraClient
     }
 
     /**
-     * @param  string  $customerCode
-     * @param  array  $ids
      * @return Certificate[]
      *
      * @throws AvalaraException
@@ -273,10 +247,6 @@ class AvalaraClient
     }
 
     /**
-     * @param  string  $customerCode
-     * @param  array  $ids
-     * @return array
-     *
      * @throws AvalaraException
      */
     public function unlinkCertificatesFromCustomer(string $customerCode, array $ids): array
@@ -291,9 +261,6 @@ class AvalaraClient
     }
 
     /**
-     * @param  Certificate  $model
-     * @return Certificate
-     *
      * @throws AvalaraException
      */
     public function createCertificate(Certificate $model): Certificate
@@ -304,7 +271,6 @@ class AvalaraClient
     }
 
     /**
-     * @param  Certificate  $model
      * @return Certificate
      *
      * @throws AvalaraException
@@ -317,13 +283,15 @@ class AvalaraClient
     }
 
     /**
-     * @param  int  $id
-     * @return void
-     *
      * @throws AvalaraException
      */
     public function deleteCertificate(int $id): void
     {
         $this->delete("companies/$this->companyId/certificates/$id");
+    }
+
+    public function createCertExpressInvite(string $customerCode, CreateCertExpressInvitation $invitation): array
+    {
+        return $this->post("companies/$this->companyId/customers/$customerCode/certexpressinvites", $invitation->toArray());
     }
 }
