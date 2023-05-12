@@ -8,7 +8,5 @@ class CertExpressInvitation extends BaseModel
 
     public string $deliveryMethod;
 
-    public string $status = 'Ready';
-
     public ?string $requestLink = null;
 }

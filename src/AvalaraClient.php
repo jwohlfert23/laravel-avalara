@@ -302,10 +302,8 @@ class AvalaraClient
 
     public function createCertExpressInvite(string $customerCode, CreateCertExpressInvitation $invitation): CertExpressInvitation
     {
-        $res = $this->post("companies/$this->companyId/customers/$customerCode/certexpressinvites", $invitation->toArray())[0];
+        $res = $this->post("companies/$this->companyId/customers/$customerCode/certexpressinvites", $invitation->toArray());
 
-        return new CertExpressInvitation(array_merge($res['invitation'], [
-            'status' => $res['status']
-        ]));
+        return new CertExpressInvitation($res[0]['invitation']);
     }
 }
