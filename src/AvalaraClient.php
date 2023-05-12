@@ -7,6 +7,7 @@ use Illuminate\Http\Client\HttpClientException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
+use Jwohlfert23\LaravelAvalara\Models\CertExpressInvitation;
 use Jwohlfert23\LaravelAvalara\Models\Certificate;
 use Jwohlfert23\LaravelAvalara\Models\CreateCertExpressInvitation;
 use Jwohlfert23\LaravelAvalara\Models\CreateTransaction;
@@ -83,9 +84,10 @@ class AvalaraClient
      * @throws AvalaraException
      */
     public function getTransactionByCode(
-        string $transCode,
+        string         $transCode,
         AvalaraDocType $documentType = AvalaraDocType::SALES_INVOICE
-    ): Transaction {
+    ): Transaction
+    {
         $res = $this->get("companies/$this->companyCode/transactions/$transCode", [
             'documentType' => $documentType->value,
         ]);
@@ -98,7 +100,7 @@ class AvalaraClient
      */
     public function createTransaction(CreateTransaction $model): Transaction
     {
-        if (! isset($model->companyCode)) {
+        if (!isset($model->companyCode)) {
             $model->companyCode = $this->companyCode;
         }
 
@@ -117,12 +119,13 @@ class AvalaraClient
     }
 
     public function adjustTransaction(
-        string $transCode,
-        string $reason,
-        string $description,
+        string            $transCode,
+        string            $reason,
+        string            $description,
         CreateTransaction $model,
-        AvalaraDocType $documentType = AvalaraDocType::SALES_INVOICE,
-    ): Transaction {
+        AvalaraDocType    $documentType = AvalaraDocType::SALES_INVOICE,
+    ): Transaction
+    {
         $res = $this->post(
             "companies/$this->companyCode/transactions/$transCode/adjust?documentType=$documentType->value",
             [
@@ -139,10 +142,11 @@ class AvalaraClient
      * @throws AvalaraException
      */
     public function voidTransaction(
-        string $transCode,
+        string         $transCode,
         AvalaraDocType $documentType = AvalaraDocType::SALES_INVOICE,
-        string $code = 'DocVoided'
-    ): Transaction {
+        string         $code = 'DocVoided'
+    ): Transaction
+    {
         $url = "companies/$this->companyCode/transactions/$transCode/void?documentType=$documentType->value";
 
         $res = $this->post($url, ['code' => $code]);
@@ -290,8 +294,18 @@ class AvalaraClient
         $this->delete("companies/$this->companyId/certificates/$id");
     }
 
-    public function createCertExpressInvite(string $customerCode, CreateCertExpressInvitation $invitation): array
+    public function getCertExpressInvite(string $customerCode, int $id): CertExpressInvitation
     {
-        return $this->post("companies/$this->companyId/customers/$customerCode/certexpressinvites", $invitation->toArray());
+        $res = $this->get("companies/$this->companyId/customers/$customerCode/certexpressinvites/$id");
+        return new CertExpressInvitation($res);
+    }
+
+    public function createCertExpressInvite(string $customerCode, CreateCertExpressInvitation $invitation): CertExpressInvitation
+    {
+        $res = $this->post("companies/$this->companyId/customers/$customerCode/certexpressinvites", $invitation->toArray())[0];
+
+        return new CertExpressInvitation(array_merge($res['invitation'], [
+            'status' => $res['status']
+        ]));
     }
 }
