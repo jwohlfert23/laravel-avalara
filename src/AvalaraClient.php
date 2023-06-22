@@ -84,10 +84,9 @@ class AvalaraClient
      * @throws AvalaraException
      */
     public function getTransactionByCode(
-        string         $transCode,
+        string $transCode,
         AvalaraDocType $documentType = AvalaraDocType::SALES_INVOICE
-    ): Transaction
-    {
+    ): Transaction {
         $res = $this->get("companies/$this->companyCode/transactions/$transCode", [
             'documentType' => $documentType->value,
         ]);
@@ -100,7 +99,7 @@ class AvalaraClient
      */
     public function createTransaction(CreateTransaction $model): Transaction
     {
-        if (!isset($model->companyCode)) {
+        if (! isset($model->companyCode)) {
             $model->companyCode = $this->companyCode;
         }
 
@@ -118,14 +117,29 @@ class AvalaraClient
         return new Transaction($res);
     }
 
-    public function adjustTransaction(
-        string            $transCode,
-        string            $reason,
-        string            $description,
-        CreateTransaction $model,
-        AvalaraDocType    $documentType = AvalaraDocType::SALES_INVOICE,
-    ): Transaction
+
+    public function createOrAdjustTransaction(CreateTransaction $model, string $reason, string $description)
     {
+        if (! isset($model->companyCode)) {
+            $model->companyCode = $this->companyCode;
+        }
+
+        $res = $this->post('transactions/createoradjust', [
+            'createTransactionModel' => $model->toArray(),
+            'adjustmentReason' => $reason,
+            'adjustmentDescription' => $description,
+        ]);
+
+        return new Transaction($res);
+    }
+
+    public function adjustTransaction(
+        string $transCode,
+        string $reason,
+        string $description,
+        CreateTransaction $model,
+        AvalaraDocType $documentType = AvalaraDocType::SALES_INVOICE,
+    ): Transaction {
         $res = $this->post(
             "companies/$this->companyCode/transactions/$transCode/adjust?documentType=$documentType->value",
             [
@@ -142,11 +156,10 @@ class AvalaraClient
      * @throws AvalaraException
      */
     public function voidTransaction(
-        string         $transCode,
+        string $transCode,
         AvalaraDocType $documentType = AvalaraDocType::SALES_INVOICE,
-        string         $code = 'DocVoided'
-    ): Transaction
-    {
+        string $code = 'DocVoided'
+    ): Transaction {
         $url = "companies/$this->companyCode/transactions/$transCode/void?documentType=$documentType->value";
 
         $res = $this->post($url, ['code' => $code]);
@@ -297,6 +310,7 @@ class AvalaraClient
     public function getCertExpressInvite(string $customerCode, int $id): CertExpressInvitation
     {
         $res = $this->get("companies/$this->companyId/customers/$customerCode/certexpressinvites/$id");
+
         return new CertExpressInvitation($res);
     }
 

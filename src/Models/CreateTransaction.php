@@ -80,4 +80,9 @@ class CreateTransaction extends BaseModel
     {
         return Avalara::createTransaction($this);
     }
+
+    public function createOrAdjust(string $reason, string $description)
+    {
+        return Avalara::createOrAdjustTransaction($this, $reason, $description);
+    }
 }

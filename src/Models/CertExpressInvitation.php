@@ -1,4 +1,6 @@
-<?php namespace Jwohlfert23\LaravelAvalara\Models;
+<?php
+
+namespace Jwohlfert23\LaravelAvalara\Models;
 
 class CertExpressInvitation extends BaseModel
 {
