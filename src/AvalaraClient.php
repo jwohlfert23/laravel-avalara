@@ -22,7 +22,7 @@ class AvalaraClient
 
     protected string $companyCode;
 
-    public function __construct(int $companyId = null, string $companyCode = null)
+    public function __construct(?int $companyId = null, ?string $companyCode = null)
     {
         $this->companyId = $companyId ?? config('avalara.company_id') ?? throw new \Exception('Could not determine companyId');
         $this->companyCode = $companyCode ?? config('avalara.company_code') ?? throw new \Exception('Could not determine companyCode');
@@ -116,7 +116,6 @@ class AvalaraClient
 
         return new Transaction($res);
     }
-
 
     public function createOrAdjustTransaction(CreateTransaction $model, string $reason, string $description)
     {

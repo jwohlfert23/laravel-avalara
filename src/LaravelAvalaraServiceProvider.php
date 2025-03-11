@@ -14,7 +14,7 @@ class LaravelAvalaraServiceProvider extends PackageServiceProvider
             ->hasConfigFile();
 
         $this->app->singleton('laravel-avalara', function ($app) {
-            return new AvalaraClient();
+            return new AvalaraClient;
         });
     }
 }

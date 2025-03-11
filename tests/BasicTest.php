@@ -45,7 +45,7 @@ it('can create transaction', function () {
         ]),
     ]);
 
-    $transaction = new CreateTransaction();
+    $transaction = new CreateTransaction;
 
     $transaction->date = now();
     $transaction->type = AvalaraDocType::SALES_ORDER;
@@ -68,7 +68,7 @@ it('can create transaction', function () {
 });
 
 it('retries quotes', function () {
-    $transaction = new CreateTransaction();
+    $transaction = new CreateTransaction;
 
     Http::fakeSequence()
         ->push('', 504)
@@ -82,7 +82,7 @@ it('retries quotes', function () {
 });
 
 it('throws AvalaraException on failure', function () {
-    $transaction = new CreateTransaction();
+    $transaction = new CreateTransaction;
 
     Http::fake([
         '*' => Http::response('', 504),

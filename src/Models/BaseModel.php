@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 use ReflectionClass;
 use ReflectionProperty;
 
-class BaseModel implements Arrayable, \JsonSerializable
+class BaseModel implements \JsonSerializable, Arrayable
 {
     public function getValue(ReflectionProperty $property, mixed $value): mixed
     {

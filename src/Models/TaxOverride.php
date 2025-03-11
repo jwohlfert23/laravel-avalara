@@ -14,9 +14,9 @@ class TaxOverride extends BaseModel
 
     public ?string $reason;
 
-    public static function taxDate(Carbon $taxDate, string $reason = null): TaxOverride
+    public static function taxDate(Carbon $taxDate, ?string $reason = null): TaxOverride
     {
-        $model = new TaxOverride();
+        $model = new TaxOverride;
         $model->type = 'TaxDate';
         $model->taxDate = $taxDate;
         $model->reason = $reason;
@@ -24,9 +24,9 @@ class TaxOverride extends BaseModel
         return $model;
     }
 
-    public static function taxAmount(float $amount, string $reason = null): TaxOverride
+    public static function taxAmount(float $amount, ?string $reason = null): TaxOverride
     {
-        $model = new TaxOverride();
+        $model = new TaxOverride;
         $model->type = 'TaxAmount';
         $model->taxAmount = $amount;
         $model->reason = $reason;
