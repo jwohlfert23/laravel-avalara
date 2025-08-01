@@ -168,9 +168,10 @@ class AvalaraClient
 
     public function commitTransaction(
         string $transCode,
+        bool $commit = true
     ): Transaction {
         $res = $this->post("companies/$this->companyCode/transactions/$transCode/commit", [
-            'commit' => true,
+            'commit' => $commit,
         ]);
 
         return new Transaction($res);
