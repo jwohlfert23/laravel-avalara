@@ -166,6 +166,16 @@ class AvalaraClient
         return new Transaction($res);
     }
 
+    public function commitTransaction(
+        string $transCode,
+    ): Transaction {
+        $res = $this->post("companies/$this->companyCode/transactions/$transCode/commit", [
+            'commit' => true,
+        ]);
+
+        return new Transaction($res);
+    }
+
     /**
      * @return ExemptionReason[]
      *
