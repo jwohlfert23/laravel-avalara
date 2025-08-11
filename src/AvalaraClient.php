@@ -177,6 +177,14 @@ class AvalaraClient
         return new Transaction($res);
     }
 
+    public function uncommitTransaction(
+        string $transCode,
+    ): Transaction {
+        $res = $this->post("companies/$this->companyCode/transactions/$transCode/uncommit", []);
+
+        return new Transaction($res);
+    }
+
     /**
      * @return ExemptionReason[]
      *
