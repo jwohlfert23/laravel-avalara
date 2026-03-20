@@ -32,6 +32,7 @@ class AvalaraClient
     {
         return Http::baseUrl(config('avalara.url'))
             ->throw()
+            ->timeout(config('avalara.timeout', 30))
             ->withBasicAuth(config('avalara.username'), config('avalara.password'))
             ->asJson();
     }

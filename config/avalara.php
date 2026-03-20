@@ -10,4 +10,6 @@ return [
     'company_id' => env('AVALARA_COMPANY_ID'),
 
     'company_code' => env('AVALARA_COMPANY_CODE'),
+
+    'timeout' => env('AVALARA_TIMEOUT', 30),
 ];
