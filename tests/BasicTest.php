@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Http;
+use Jwohlfert23\LaravelAvalara\AvalaraClient;
 use Jwohlfert23\LaravelAvalara\AvalaraDocType;
 use Jwohlfert23\LaravelAvalara\AvalaraException;
 use Jwohlfert23\LaravelAvalara\Models\Address;
@@ -92,3 +93,27 @@ it('throws AvalaraException on failure', function () {
     $transaction->type = AvalaraDocType::SALES_ORDER;
     $transaction->create();
 })->throws(AvalaraException::class);
+
+it('pages through listed transactions', function () {
+    $page = fn (array $ids) => [
+        '@recordsetCount' => 3,
+        'value' => array_map(fn (int $id) => ['id' => $id, 'code' => "INV-$id", 'status' => 'Committed', 'locked' => false, 'totalTax' => 1.5], $ids),
+    ];
+    Http::fakeSequence()->push($page([1, 2]))->push($page([3]));
+
+    $transactions = app(AvalaraClient::class)
+        ->listTransactions("status eq 'Committed'", orderBy: 'date desc', pageSize: 2)
+        ->all();
+
+    expect($transactions)->toHaveCount(3)
+        ->and($transactions[2])->toBeInstanceOf(Transaction::class)
+        ->and($transactions[2]->code)->toBe('INV-3')
+        ->and($transactions[2]->locked)->toBeFalse();
+
+    Http::assertSentCount(2);
+    Http::assertSent(fn ($request) => str_contains($request->url(), 'companies/testing/transactions?')
+        && str_contains($request->url(), '%24filter=status%20eq%20%27Committed%27')
+        && str_contains($request->url(), '%24orderBy=date%20desc')
+        && str_contains($request->url(), '%24top=2')
+        && str_contains($request->url(), '%24skip=2'));
+});

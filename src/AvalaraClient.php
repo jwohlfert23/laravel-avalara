@@ -7,6 +7,7 @@ use Illuminate\Http\Client\HttpClientException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\LazyCollection;
 use Jwohlfert23\LaravelAvalara\Models\CertExpressInvitation;
 use Jwohlfert23\LaravelAvalara\Models\Certificate;
 use Jwohlfert23\LaravelAvalara\Models\CreateCertExpressInvitation;
@@ -165,6 +166,41 @@ class AvalaraClient
         $res = $this->post($url, ['code' => $code]);
 
         return new Transaction($res);
+    }
+
+    /**
+     * Page through every transaction that matches an AvaTax $filter expression,
+     * for example "date < '2026-08-01' and status eq 'Committed' and locked eq false".
+     *
+     * @return LazyCollection<int, Transaction>
+     *
+     * @throws AvalaraException
+     */
+    public function listTransactions(
+        string $filter,
+        ?string $orderBy = null,
+        ?string $include = null,
+        int $pageSize = 1000,
+    ): LazyCollection {
+        return LazyCollection::make(function () use ($filter, $orderBy, $include, $pageSize) {
+            $skip = 0;
+
+            do {
+                $res = $this->get("companies/$this->companyCode/transactions", array_filter([
+                    '$filter' => $filter,
+                    '$orderBy' => $orderBy,
+                    '$include' => $include,
+                    '$top' => $pageSize,
+                    '$skip' => $skip,
+                ]));
+
+                foreach ($res['value'] ?? [] as $row) {
+                    yield new Transaction($row);
+                }
+
+                $skip += $pageSize;
+            } while (count($res['value'] ?? []) === $pageSize);
+        });
     }
 
     public function commitTransaction(
